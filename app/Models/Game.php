@@ -29,4 +29,9 @@ class Game extends Model
     {
         return UserGameMaster::query()->where('game_id', $this->id)->get();
     }
+
+    public function messages(): Collection
+    {
+        return Message::query()->where('game_id', $this->id)->get();
+    }
 }

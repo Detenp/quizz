@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Game;
 use App\Models\GameToUser;
+use App\Models\Message;
 use App\Models\User;
 use App\Models\UserGameMaster;
 use App\Utils\Utils;
@@ -108,6 +109,12 @@ class GameController extends Controller
             GameToUser::query()->where('game_id', $game->id)->delete();
             UserGameMaster::query()->where('user_id', $user->id)->delete();
 
+            // On supprime les messages de la game
+            Message::query()->whereIn('id', $game->messages()->pluck('id'))->delete();
+
+            // On supprime la game
+            $game->delete();
+
             // TODO broadcast fin de la game
 
             User::query()->whereIn('id', $gamesToUsersIds)->delete();
@@ -117,5 +124,50 @@ class GameController extends Controller
 
             // TODO broadcast utilisateur déco
         }
+    }
+
+    public function clearGameMessages(Request $request, int $id) {
+        $game = Game::query()->find($id);
+
+        if (!$game) {
+            abort(404, 'No game found with id ' . $id . '!');
+        }
+
+        $user = Context::get(Utils::CONTEXT_USER_KEY);
+
+        if (!$user->isGameMaster()) {
+            abort(403, 'User has to be game master to clear messages!');
+        }
+
+        Message::query()->whereIn('id', $game->messages()->pluck('id'))->delete();
+
+        // TODO broadcast messages deleted
+    }
+
+    public function postGameMessage(Request $request, int $id) {
+        $game = Game::query()->find($id);
+
+        if (!$game) {
+            abort(404, 'No game found with id ' . $id . '!');
+        }
+
+        $messageContent = $request->input('message');
+
+        if (!$messageContent) {
+            abort(400, 'No message found in body!');
+        }
+
+        /**
+         * @var User $user
+         */
+        $user = Context::get(Utils::CONTEXT_USER_KEY);
+
+        $message = new Message([
+            'user_id' => $user->id,
+            'game_id' => $game->id,
+            'message' => $messageContent
+        ]);
+
+        // TODO Broadcast un message a été posté
     }
 }

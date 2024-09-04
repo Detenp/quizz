@@ -13,4 +13,10 @@ Route::post('/game/{id}/join', [GameController::class, 'joinGame']);
 Route::middleware([CheckUserExists::class])->group(function () {
     // On quitte la game. Si on est GM la game est supprimée et les joueurs aussi
     Route::post('/game/{id}/leave', [GameController::class, 'leaveGame']);
+
+    // On vide les messages de la game
+    Route::post('/game/{id}/messages/clear', [GameController::class, 'clearGameMessages']);
+
+    // Un utilisateur post un message
+    Route::post('/game/{id}/messages', [GameController::class, 'postGameMessage']);
 });
