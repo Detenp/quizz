@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(false);
+            $table->jsonb('status')->nullable(false);
             $table->timestamps();
         });
     }

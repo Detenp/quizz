@@ -7,6 +7,7 @@ use App\Models\GameToUser;
 use App\Models\Message;
 use App\Models\User;
 use App\Models\UserGameMaster;
+use App\Utils\GameStatus;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
@@ -15,6 +16,39 @@ use Illuminate\Support\Str;
 
 class GameController extends Controller
 {
+    public function updateGameStatus(Request $request, int $id) {
+        $game = Game::query()->find($id);
+
+        if (!$game) {
+            abort(404, 'No game found with id ' . $id . '!');
+        }
+
+        /**
+         * @var User $user
+         */
+        $user = Context::get(Utils::CONTEXT_USER_KEY);
+
+        if (!$user->isGameMaster()) {
+            abort(403, 'User has to be game master to clear messages!');
+        }
+
+        $gameStatus = new GameStatus($request->input('gameStatus'));
+
+        $game->game_status = $gameStatus->jsonSerialize();
+
+        $game->save();
+    }
+
+    public function getGame(Request $request, int $id) {
+        $game = Game::query()->find($id);
+
+        if (!$game) {
+            abort(404, 'No game found with id ' . $id . '!');
+        }
+
+        response()->json($game->jsonSerialize());
+    }
+
     public function createGame(Request $request) {
         $name = $request->input('name');
 
@@ -168,6 +202,30 @@ class GameController extends Controller
             'message' => $messageContent
         ]);
 
-        // TODO Broadcast un message a été posté
+        $message->save();
+    }
+
+    public function getGameMessages(Request $request, int $id) {
+        $game = Game::query()->find($id);
+
+        if (!$game) {
+            abort(404, 'No game found with id ' . $id . '!');
+        }
+
+        return response()->json($game->messages()->jsonSerialize());
+    }
+
+    public function getPlayers(Request $request, int $id) {
+        $game = Game::query()->find($id);
+
+        if (!$game) {
+            abort(404, 'No game found with id ' . $id . '!');
+        }
+
+        return response()->json($game->players()->jsonSerialize());
+    }
+
+    public function getGames(Request $request) {
+        return response()->json(Game::all());
     }
 }

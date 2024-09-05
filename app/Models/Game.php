@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 /**
  * @property int $id
  * @property string $name
+ * @property array{show_messages: bool} $game_status
  */
 class Game extends Model
 {
