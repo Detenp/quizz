@@ -50,9 +50,9 @@ class GameController extends Controller
     }
 
     public function createGame(Request $request) {
-        $name = $request->input('name');
+        $name = $request->json('name');
 
-        $gameMaster = $request->input('game_master');
+        $gameMaster = $request->json('game_master');
 
         if (!$name || !$gameMaster) {
             abort(400, 'No name for game or no gameMaster provided!');
@@ -60,6 +60,9 @@ class GameController extends Controller
 
         $game = new Game([
             'name' => $name,
+            'status' => [
+                'show_messages' => false
+            ]
         ]);
 
         $game->save();
@@ -86,7 +89,8 @@ class GameController extends Controller
         ]))->save();
 
         return response()->json([
-            'user-secret' => Crypt::encryptString($user->uuid)
+            'user-secret' => Crypt::encryptString($user->uuid),
+            'game_id' => $game->id
         ]);
     }
 

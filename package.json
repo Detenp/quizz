@@ -27,6 +27,8 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "bootstrap": "^5.3.3",
+        "micromodal": "^0.4.10",
         "whatwg-fetch": "^3.6.20"
     }
 }
