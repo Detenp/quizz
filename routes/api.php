@@ -27,6 +27,8 @@ Route::middleware([CheckUserExists::class])->group(function () {
     Route::get('/games/{id}/messages', [GameController::class, 'getGameMessages']);
 
     Route::get('/games/{id}/players', [GameController::class, 'getPlayers']);
+
+    Route::get('/game/{id}/is-game-master');
 });
 
 Route::get('/games', [GameController::class, 'getGames']);

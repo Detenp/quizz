@@ -46,7 +46,7 @@ class GameController extends Controller
             abort(404, 'No game found with id ' . $id . '!');
         }
 
-        response()->json($game->jsonSerialize());
+        return response()->json($game->jsonSerialize());
     }
 
     public function createGame(Request $request) {
@@ -153,14 +153,10 @@ class GameController extends Controller
             // On supprime la game
             $game->delete();
 
-            // TODO broadcast fin de la game
-
             User::query()->whereIn('id', $gamesToUsersIds)->delete();
         } else {
             GameToUser::query()->where('user_id', $user->id)->delete();
             User::query()->where('id', $user->id)->delete();
-
-            // TODO broadcast utilisateur déco
         }
     }
 
@@ -178,8 +174,6 @@ class GameController extends Controller
         }
 
         Message::query()->whereIn('id', $game->messages()->pluck('id'))->delete();
-
-        // TODO broadcast messages deleted
     }
 
     public function postGameMessage(Request $request, int $id) {
@@ -231,5 +225,22 @@ class GameController extends Controller
 
     public function getGames(Request $request) {
         return response()->json(Game::all());
+    }
+
+    public function isGameMaster(Request $request, int $id) {
+        $game = Game::query()->find($id);
+
+        if (!$game) {
+            abort(404, 'No game found with id ' . $id . '!');
+        }
+
+        /**
+         * @var User $user
+         */
+        $user = Context::get(Utils::CONTEXT_USER_KEY);
+
+        return response()->json([
+            'is_game_master' => $game->gameMaster()->id === $user->id
+        ]);
     }
 }

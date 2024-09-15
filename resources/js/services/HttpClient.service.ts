@@ -8,6 +8,11 @@ export default class HttpClient {
     private baseUrl = 'http://localhost:8000/api/'
 
     protected constructor() {
+        const clientId = sessionStorage.getItem('clientId')
+
+        if (clientId) {
+            this.clientId = clientId
+        }
     }
 
     static HttpClient(): HttpClient {
@@ -19,6 +24,8 @@ export default class HttpClient {
     }
 
     public setClientId(clientId: string) {
+        sessionStorage.setItem('clientId', clientId)
+
         this.clientId = clientId
     }
 
@@ -35,6 +42,7 @@ export default class HttpClient {
             method: 'get',
             headers: headers
         }).then((response: Response) => {
+            console.log(response)
             return response.json()
         })
     }

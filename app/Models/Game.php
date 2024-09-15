@@ -18,17 +18,26 @@ class Game extends Model
     protected $table = 'games';
 
     protected $fillable = [
-        'name'
+        'name',
+        'status'
+    ];
+
+    protected $casts = [
+        'status' => 'array'
     ];
 
     public function players(): Collection
     {
-        return GameToUser::query()->where('game_id', $this->id)->get();
+        $gameToUsersIds = GameToUser::query()->where('game_id', $this->id)->get()->pluck('user_id');
+
+        return User::query()->whereIn('id', $gameToUsersIds)->get();
     }
 
-    public function gameMaster(): Collection
+    public function gameMaster(): User
     {
-        return UserGameMaster::query()->where('game_id', $this->id)->get();
+        $userGameMasterId = UserGameMaster::query()->where('game_id', $this->id)->first()->user_id;
+
+        return User::query()->first($userGameMasterId);
     }
 
     public function messages(): Collection

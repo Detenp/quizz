@@ -16,6 +16,7 @@ export default function GamePage() {
 
     setTimeout(() => {
         httpClient.get('games/' + id).then((response: Game) => {
+            console.log(response)
             updateGame(response)
         })
 
