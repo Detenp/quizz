@@ -42,7 +42,6 @@ export default class HttpClient {
             method: 'get',
             headers: headers
         }).then((response: Response) => {
-            console.log(response)
             return response.json()
         })
     }

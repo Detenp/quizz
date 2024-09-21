@@ -3,5 +3,6 @@ export default interface Game {
     name: string,
     game_status: {
         show_messages: boolean
-    }
+    },
+    players_count: number
 }

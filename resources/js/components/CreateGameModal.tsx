@@ -1,4 +1,4 @@
-import {ChangeEvent, FormEvent, useRef, useState} from "react";
+import {ChangeEvent, FormEvent, useState} from "react";
 
 export default function CreateGameModal({ show, handleClose, formOutput }) {
     const [formData , setFormData] = useState({
@@ -6,9 +6,14 @@ export default function CreateGameModal({ show, handleClose, formOutput }) {
         gameName: ''
     })
 
+    const [isFormValid, setFormValid] = useState(false)
+
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
+
         setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+
+        setFormValid(formData.gameName.match(/^ *$/) === null || formData.username.match(/^ *$/) === null)
     }
 
     function handleSubmit(event: FormEvent) {
@@ -24,13 +29,13 @@ export default function CreateGameModal({ show, handleClose, formOutput }) {
                  aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <div className="modal-header justify-content-center">
+                            <h3 className="modal-title" id="exampleModalLabel">Create a game</h3>
                         </div>
 
                         <form onSubmit={handleSubmit}>
                             <div className="modal-body">
-                                <div className={"input-group mb-3"}>
+                                <div className={"form-group"}>
                                     <input
                                         className={"form-control"}
                                         name={"username"}
@@ -40,22 +45,27 @@ export default function CreateGameModal({ show, handleClose, formOutput }) {
                                         maxLength={25}
                                         value={formData.username}
                                         onChange={handleChange}
+                                        required={true}
                                     />
+                                </div>
+
+                                <div className="mt-2">
                                     <input
                                         className={"form-control"}
                                         name={"gameName"}
                                         type={"text"}
-                                        placeholder={"GamePage Name"}
-                                        aria-label={"GamePage Name"}
+                                        placeholder={"Game Name"}
+                                        aria-label={"Game Name"}
                                         maxLength={25}
                                         value={formData.gameName}
                                         onChange={handleChange}
+                                        required={true}
                                     />
                                 </div>
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" onClick={handleClose}>Close</button>
-                                <input type="submit" className="btn btn-primary" value={"Save changes"}/>
+                                <input type="submit" className={`btn btn-primary ${!isFormValid ? "disabled" : ""}`} value={"Save changes"}/>
                             </div>
                         </form>
                     </div>

@@ -9,7 +9,9 @@ use Illuminate\Support\Collection;
 /**
  * @property int $id
  * @property string $name
- * @property array{show_messages: bool} $game_status
+ * @property array{
+ *     show_messages: bool
+ * } $game_status
  */
 class Game extends Model
 {
@@ -43,5 +45,10 @@ class Game extends Model
     public function messages(): Collection
     {
         return Message::query()->where('game_id', $this->id)->get();
+    }
+
+    public function playersCount(): int
+    {
+        return GameToUser::query()->where('game_id', $this->id)->count();
     }
 }

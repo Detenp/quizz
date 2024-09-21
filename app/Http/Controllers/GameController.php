@@ -183,7 +183,7 @@ class GameController extends Controller
             abort(404, 'No game found with id ' . $id . '!');
         }
 
-        $messageContent = $request->input('message');
+        $messageContent = $request->json('message');
 
         if (!$messageContent) {
             abort(400, 'No message found in body!');
@@ -224,7 +224,20 @@ class GameController extends Controller
     }
 
     public function getGames(Request $request) {
-        return response()->json(Game::all());
+        $games = Game::all();
+
+        $finalGames = [];
+
+        foreach ($games as $game) {
+            $playersCount = $game->playersCount();
+
+            $finalGame = $game->toArray();
+            $finalGame['players_count'] = $playersCount;
+
+            $finalGames[] = $finalGame;
+        }
+
+        return response()->json($finalGames);
     }
 
     public function isGameMaster(Request $request, int $id) {

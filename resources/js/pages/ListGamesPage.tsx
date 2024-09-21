@@ -42,16 +42,23 @@ export default function ListGamesPage() {
             <CreateGameModal show={isModalOpen} handleClose={handleCloseModal} formOutput={handleFormOutput}/>
             <div className="d-flex flex-row justify-content-center w-100 mt-5">
                 <div className="d-flex flex-column justify-content-center align-items-center w-50 position-relative">
-                    <h2 className="position-absolute"
-                        style={{
-                            left: "50%",
-                            transform: "translate(-50%, -150%)"
-                        }}>List games</h2>
-                    <div className="d-flex w-100 justify-content-end">
-                        <button className="btn btn-primary ml-auto align-self-center" onClick={handleOpenModal}>Create</button>
+                    <div className="d-flex justify-content-center">
+                        <h2>
+                            List games
+                        </h2>
                     </div>
+                    <button
+                        className="btn btn-primary ml-auto align-self-center"
+                        onClick={handleOpenModal}
+                        style={{
+                            transform: "translateY(-33px)"
+                        }}
+                    >
+                        Create
+                    </button>
                     <div className="d-flex flex-column justify-content-center align-items-center mt-3 w-100">
-                        {games.map(game => <ShowGameComponent key={game.id} name={game.name} playerCount={0}></ShowGameComponent>)}
+                        {games.map(game => <ShowGameComponent key={game.id} name={game.name}
+                                                              playerCount={game.players_count}></ShowGameComponent>)}
                     </div>
                 </div>
             </div>
